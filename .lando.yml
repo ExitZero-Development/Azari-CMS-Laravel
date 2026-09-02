@@ -1,0 +1,43 @@
+name: cms
+recipe: laravel
+config:
+  php: '8.3'
+  composer_version: '2'
+  via: nginx
+  webroot: public
+  database: postgres:16
+  cache: redis
+  xdebug: false
+
+services:
+  # Node for building Filament panel assets
+  node:
+    type: node:20
+
+  # MinIO  local S3-compatible storage for your media
+  minio:
+    type: compose
+    services:
+      image: minio/minio
+      command: server /data --console-address ":9001"
+      environment:
+        MINIO_ROOT_USER: lando
+        MINIO_ROOT_PASSWORD: landopassword
+      ports:
+        - "9000:9000"
+        - "9001:9001"
+      volumes:
+        - minio-data:/data
+    volumes:
+      minio-data:
+
+tooling:
+  # Run node/npm through the node service
+  npm:
+    service: node
+  node:
+    service: node
+  # Convenience alias for artisan
+  artisan:
+    service: appserver
+    cmd: php artisan

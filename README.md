@@ -1,184 +1,58 @@
-# Headless Multi-Tenant CMS
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-A headless, multi-tenant content management system built with **Laravel** and **Filament**, serving structured content to any frontend framework (React, Next.js, Vue, Nuxt, Angular) over a clean JSON API.
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-Think of it as a self-hosted, developer-first **WordPress + ACF** — familiar content concepts, but fully decoupled and API-driven.
+## About Laravel
 
----
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-## Concept
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Content is modeled as **fixed types** (Page, Post, …) with two layers:
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-- **Fixed columns** for the queryable, routable, SEO-relevant data — `slug`, `title`, `status`, `published_at`, and meta fields.
-- **A JSON `content` column** holding an ordered array of **blocks** (hero, gallery, text, CTA, …) that make up the body.
+## Learning Laravel
 
-Blocks are **developer-defined in PHP**. Each block class owns both its Filament admin form schema *and* its API transformation, so there's a single source of truth from the editing UI to the API response. Editors compose and reorder blocks visually with Filament's **Builder** field; the frontend maps each block `type` to a component and renders them in order.
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
----
+In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Stack
+You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Laravel |
-| Admin panel | Filament (native multi-tenancy) |
-| API auth | Laravel Sanctum |
-| API layer | Laravel API Resources |
-| Media | Spatie Media Library |
-| Media storage | S3-compatible (AWS S3 / Cloudflare R2 / DigitalOcean Spaces / MinIO) |
-| Database | MySQL / PostgreSQL |
-| Frontend | Any (React, Next.js, Vue, Nuxt, Angular) — consumes the API |
+## Agentic Development
 
----
-
-## Architecture
-
-- **Multi-tenancy** — Handled natively by Filament. All content is scoped to the tenant a user belongs to, so multiple organizations manage content independently within one installation.
-- **Block registry** — A central registry composes a **shared block library** plus **per-type blocks**. Content types resolve to `general + type-specific` blocks. The same registry powers both the admin form and the API serialization.
-- **Media** — Blocks store media **references (IDs)**, never baked-in URLs. URLs, conversions, and responsive sources are resolved at API output time, so storage/CDN changes never leave stale content.
-- **API** — Public read API via Laravel API Resources, secured with Sanctum. Serves clean, frontend-ready JSON with blocks emitted in order.
-
-### Example content payload
-
-```json
-{
-  "slug": "about-us",
-  "title": "About Us",
-  "status": "published",
-  "seo": {
-    "meta_title": "About Us",
-    "meta_description": "..."
-  },
-  "blocks": [
-    { "order": 0, "type": "hero", "data": { "title": "...", "image": { "url": "..." } } },
-    { "order": 1, "type": "text", "data": { "body": "..." } },
-    { "order": 2, "type": "gallery", "data": { "images": [ ... ] } }
-  ]
-}
-```
-
----
-
-## Requirements
-
-- PHP 8.2+
-- Composer
-- Node.js & npm
-- MySQL or PostgreSQL
-- An S3-compatible storage bucket (or MinIO for local dev)
-
----
-
-## Installation
+Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/<your-username>/<repo-name>.git
-cd <repo-name>
+composer require laravel/boost --dev
 
-# 2. Install PHP dependencies
-composer install
-
-# 3. Install frontend dependencies (for the Filament panel assets)
-npm install
-
-# 4. Environment
-cp .env.example .env
-php artisan key:generate
+php artisan boost:install
 ```
 
-Configure your `.env`:
+Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
 
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=cms
-DB_USERNAME=root
-DB_PASSWORD=
+## Contributing
 
-# S3-compatible storage
-FILESYSTEM_DISK=s3
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=
-AWS_BUCKET=
-AWS_ENDPOINT=          # e.g. R2 / Spaces / MinIO endpoint
-AWS_USE_PATH_STYLE_ENDPOINT=true   # true for MinIO
-```
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-Then:
+## Code of Conduct
 
-```bash
-# 5. Run migrations
-php artisan migrate
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-# 6. Create an admin user
-php artisan make:filament-user
+## Security Vulnerabilities
 
-# 7. Build assets
-npm run build
-
-# 8. Serve
-php artisan serve
-```
-
-Visit `/admin` to log in to the Filament panel.
-
----
-
-## Usage
-
-### Defining a block
-
-Each block is a class that describes its admin form and its API output:
-
-```php
-class HeroBlock
-{
-    public static string $type = 'hero';
-
-    public static function make(): Block
-    {
-        // Filament Builder block schema
-    }
-
-    public static function toApi(array $data): array
-    {
-        // Resolve image IDs -> URLs, shape the output
-    }
-}
-```
-
-Register it in the block config, mapping it to `general` or a specific type:
-
-```php
-'blocks' => [
-    'general' => [HeroBlock::class, TextBlock::class, GalleryBlock::class],
-    'page'    => [PageHeaderBlock::class],
-    'post'    => [AuthorBioBlock::class],
-],
-```
-
-### Consuming the API
-
-Fetch published content by slug, receive ordered blocks as JSON, and map each block `type` to a frontend component.
-
----
-
-## Roadmap
-
-- [ ] Filament panel + native tenancy setup
-- [ ] `Entry` model & migration (fixed SEO/routing columns + JSON content)
-- [ ] Block registry + first blocks (hero, text, gallery)
-- [ ] Spatie Media Library on S3-compatible storage
-- [ ] Sanctum + public read API resources
-- [ ] Block schema versioning strategy
-- [ ] Own admin/frontend consumer
-
----
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
 ## License
 
-TBD
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
