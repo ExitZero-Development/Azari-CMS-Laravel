@@ -169,10 +169,10 @@ Fetch published content by slug, receive ordered blocks as JSON, and map each bl
 
 ## Roadmap
 
-- [✓] Filament panel + native tenancy setup
+- [X] Filament panel + native tenancy setup
 - [ ] `Entry` model & migration (fixed SEO/routing columns + JSON content)
 - [ ] Block registry + first blocks (hero, text, gallery)
-- [✓] Spatie Media Library on S3-compatible storage
+- [X] Spatie Media Library on S3-compatible storage
 - [ ] Sanctum + public read API resources
 - [ ] Block schema versioning strategy
 - [ ] Own admin/frontend consumer
