@@ -14,7 +14,7 @@ services:
   node:
     type: node:20
 
-  # MinIO  local S3-compatible storage for your media
+  # MinIO — local S3-compatible storage for your media
   minio:
     type: compose
     services:
@@ -31,13 +31,30 @@ services:
     volumes:
       minio-data:
 
+  # One-shot init: waits for MinIO, then creates + configures the bucket
+  minio-init:
+    type: compose
+    services:
+      image: minio/mc
+      # depends_on ensures minio is up before this runs
+      depends_on:
+        - minio
+      # entrypoint runs once and exits
+      entrypoint: >
+        /bin/sh -c "
+        until mc alias set local http://minio:9000 lando landopassword; do
+          echo 'waiting for minio...'; sleep 1;
+        done;
+        mc mb --ignore-existing local/cms-media;
+        mc anonymous set download local/cms-media;
+        echo 'bucket cms-media ready';
+        "
+
 tooling:
-  # Run node/npm through the node service
   npm:
     service: node
   node:
     service: node
-  # Convenience alias for artisan
   artisan:
     service: appserver
     cmd: php artisan
